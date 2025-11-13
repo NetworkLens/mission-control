@@ -30,7 +30,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,16 +57,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MissionControlTheme {
-                ChoreApp()
+                MissionControlApp()
             }
         }
     }
 }
-
-// Define the custom font family
-val playfulFontFamily = FontFamily(
-    Font(R.font.playful_font, FontWeight.Normal) // Assumes you have playful_font.ttf in res/font
-)
 
 data class Chore(@DrawableRes val imageRes: Int, val name: String, var isCompleted: Boolean = false)
 
@@ -87,8 +81,43 @@ val allChores = listOf(
 )
 
 @Composable
-fun ChoreApp() {
-    var chores by remember { mutableStateOf(emptyList<Chore>()) }
+fun MissionControlApp() {
+    var commanderName by remember { mutableStateOf<String?>(null) }
+
+    Surface(modifier = Modifier.fillMaxSize()) {
+        if (commanderName == null) {
+            LoginScreen(onNameEntered = { commanderName = it })
+        } else {
+            ChoreApp(commanderName = commanderName!!)
+        }
+    }
+}
+
+@Composable
+fun LoginScreen(onNameEntered: (String) -> Unit) {
+    var name by remember { mutableStateOf("") }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Enter your name, commander!") }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { onNameEntered(name) }) {
+            Text("Start Mission")
+        }
+    }
+}
+
+@Composable
+fun ChoreApp(commanderName: String) {
+    var chores by remember { mutableStateOf(allChores.take(3)) }
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
@@ -103,7 +132,7 @@ fun ChoreApp() {
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.space_background), // Make sure you\'ve added this image
+            painter = painterResource(id = R.drawable.space_background), // Make sure you've added this image
             contentDescription = "Space background",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -115,15 +144,14 @@ fun ChoreApp() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.drawable.mission_control_banner), // Make sure you\'ve added this image to your drawables
+                painter = painterResource(id = R.drawable.mission_control_banner), // Make sure you've added this image to your drawables
                 contentDescription = "Mission Control Banner"
             )
             Text(
-                text = "Commander Daisy\'s Mission Log",
+                text = "Commander $commanderName's Mission Log",
                 fontSize = 18.sp,
                 color = Color.White,
                 fontFamily = FontFamily(Font(R.font.orbitron))
-                fontFamily = playfulFontFamily
             )
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -164,34 +192,6 @@ fun ChoreApp() {
             val completedChores = chores.count { it.isCompleted }
             val progress = if (chores.isNotEmpty()) completedChores.toFloat() / chores.size else 0f
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-            ) {
-                // Progress bar
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .align(Alignment.Center),
-                    color = Color(0xFF6C63FF), // Purple color for the progress
-                    trackColor = Color.White.copy(alpha = 0.3f)
-                )
-
-                val rocketSize = 70.dp
-                // Rocket image that moves with progress
-                Image(
-                    painter = painterResource(id = R.drawable.rocket), // Make sure you have rocket.png in drawables
-                    contentDescription = "Rocket",
-                    modifier = Modifier
-                        .size(rocketSize)
-                        .offset(x = (maxWidth - rocketSize) * progress)
-                        .align(Alignment.CenterStart)
-                )
-            }
             RocketProgressBar(
                 progress = progress,
                 modifier = Modifier
@@ -208,11 +208,11 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit, onDeleteClicked: () -> U
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onChoreClicked() },
-        color = Color(0xFF6C63FF), // Purple button color
+        color = Color(0x806C63FF), // Purple button color
         shape = RoundedCornerShape(50) // Make it a pill shape
     ) {
         Row(
-            modifier = Modifier.padding(start= 5.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
+            modifier = Modifier.padding(start = 5.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -293,6 +293,14 @@ fun RocketProgressBar(progress: Float, modifier: Modifier = Modifier) {
 @Composable
 fun ChoreAppPreview() {
     MissionControlTheme {
-        ChoreApp()
+        ChoreApp("Daisy")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    MissionControlTheme {
+        LoginScreen(onNameEntered = {})
     }
 }
