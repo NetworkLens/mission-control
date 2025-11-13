@@ -259,16 +259,10 @@ fun RocketProgressBar(progress: Float, modifier: Modifier = Modifier) {
             // The fill portion. It will be clipped by the parent Box.
             Box(
                 modifier = Modifier
-                    .fillMaxHeight() // Takes its height from the parent (20.dp)
-                    .fillMaxWidth(progress) // Its width is based on progress
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.progress_bar),
-                    contentDescription = "Progress bar fill",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                    .background(Color(0xFF6C63FF))
+                    .fillMaxHeight()
+                    .fillMaxWidth(progress)
+            )
         }
 
         // Rocket
