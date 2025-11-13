@@ -13,7 +13,8 @@ A simple and fun chore-tracking Android app designed for everyone, presented wit
 
 ## Screenshots
 
-*(Add your app screenshots here)*
+<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/f502a1d6-951d-4a9a-ae09-2a3537010dc4" />
+
 
 ## How to Build
 
