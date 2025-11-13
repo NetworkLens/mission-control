@@ -172,7 +172,7 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit, onDeleteClicked: () -> U
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onChoreClicked() },
-        color = Color(0xFF6C63FF), // Purple button color
+        color = Color(0x806C63FF), // Purple button color
         shape = RoundedCornerShape(50) // Make it a pill shape
     ) {
         Row(
