@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,18 +57,33 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-data class Chore(val name: String, var isCompleted: Boolean = false)
+data class Chore(@DrawableRes val imageRes: Int, val name: String, var isCompleted: Boolean = false)
+
+val allChores = listOf(
+    Chore(R.drawable.laundry, "Do laundry"),
+    Chore(R.drawable.shopping, "Put shopping away"),
+    Chore(R.drawable.bath_time, "Have a bath"),
+    Chore(R.drawable.rubbish, "Take the rubbish out"),
+    Chore(R.drawable.cooking, "Help with cooking"),
+    Chore(R.drawable.dishes, "Help do the dishes"),
+    Chore(R.drawable.feed_pet, "Help feed your pet"),
+    Chore(R.drawable.hoover, "Clean the floor"),
+    Chore(R.drawable.dresser, "Put things away"),
+    Chore(R.drawable.maths, "Do maths homework"),
+    Chore(R.drawable.bed, "Make your bed"),
+    Chore(R.drawable.teeth, "Brush your teeth"),
+)
 
 @Composable
 fun ChoreApp() {
-    var chores by remember {
-        mutableStateOf(
-            listOf(
-                Chore("Tidy Space Station"),
-                Chore("Collect Star Dust"),
-                Chore("Feed Galactic Pets"),
-                Chore("Brush Teeth")
-            )
+    var chores by remember { mutableStateOf(emptyList<Chore>()) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        ChoreSelectionDialog(
+            availableChores = allChores.filter { it !in chores },
+            onChoreSelected = { chore -> chores = chores + chore },
+            onDismiss = { showDialog = false }
         )
     }
 
@@ -125,8 +141,8 @@ fun ChoreApp() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(onClick = { chores = chores + Chore("New chore") }) {
-                Text("Add Chore")
+            Button(onClick = { showDialog = true }) {
+                Text("Add Mission")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -155,15 +171,23 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit) {
         shape = RoundedCornerShape(50) // Make it a pill shape
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+            modifier = Modifier.padding(start= 5.dp, end = 20.dp, top = 0.dp, bottom = 0.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = chore.name, color = Color.White, fontSize = 16.sp)
+            Image(
+                painter = painterResource(id = chore.imageRes),
+                contentDescription = chore.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(70.dp)
+                    .clip(RoundedCornerShape(50))
+            )
+            Spacer(Modifier.size(16.dp))
+            Text(text = chore.name, color = Color.White, fontSize = 16.sp, modifier = Modifier.weight(1f))
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = "Star",
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(30.dp),
                 tint = if (chore.isCompleted) Color.Yellow else Color.White.copy(alpha = 0.5f)
             )
         }
