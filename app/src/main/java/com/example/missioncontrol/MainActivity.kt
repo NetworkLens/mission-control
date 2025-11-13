@@ -10,12 +10,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -150,15 +152,36 @@ fun ChoreApp() {
             Spacer(modifier = Modifier.height(16.dp))
 
             val completedChores = chores.count { it.isCompleted }
-            LinearProgressIndicator(
-                progress = if (chores.isNotEmpty()) completedChores.toFloat() / chores.size else 0f,
+            val progress = if (chores.isNotEmpty()) completedChores.toFloat() / chores.size else 0f
+
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(24.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                color = Color(0xFF6C63FF), // Purple color for the progress
-                trackColor = Color.White.copy(alpha = 0.3f)
-            )
+                    .height(50.dp)
+            ) {
+                // Progress bar
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .align(Alignment.Center),
+                    color = Color(0xFF6C63FF), // Purple color for the progress
+                    trackColor = Color.White.copy(alpha = 0.3f)
+                )
+
+                val rocketSize = 50.dp
+                // Rocket image that moves with progress
+                Image(
+                    painter = painterResource(id = R.drawable.rocket), // Make sure you have rocket.png in drawables
+                    contentDescription = "Rocket",
+                    modifier = Modifier
+                        .size(rocketSize)
+                        .offset(x = (maxWidth - rocketSize) * progress)
+                        .align(Alignment.CenterStart)
+                )
+            }
         }
     }
 }
@@ -173,7 +196,7 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit, onDeleteClicked: () -> U
         shape = RoundedCornerShape(50) // Make it a pill shape
     ) {
         Row(
-            modifier = Modifier.padding(start= 5.dp, end = 12.dp, top = 0.dp, bottom = 0.dp),
+            modifier = Modifier.padding(start= 5.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
