@@ -25,9 +25,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -119,6 +122,7 @@ fun ChoreApp() {
                 text = "Commander Daisy\'s Mission Log",
                 fontSize = 18.sp,
                 color = Color.White,
+                fontFamily = FontFamily(Font(R.font.orbitron))
                 fontFamily = playfulFontFamily
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -144,7 +148,7 @@ fun ChoreApp() {
                                     it
                                 }
                             }
-                        })
+                        }, onDeleteClicked = { chores = chores - chore })
                     }
                 }
             }
@@ -159,6 +163,35 @@ fun ChoreApp() {
 
             val completedChores = chores.count { it.isCompleted }
             val progress = if (chores.isNotEmpty()) completedChores.toFloat() / chores.size else 0f
+
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+            ) {
+                // Progress bar
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .align(Alignment.Center),
+                    color = Color(0xFF6C63FF), // Purple color for the progress
+                    trackColor = Color.White.copy(alpha = 0.3f)
+                )
+
+                val rocketSize = 70.dp
+                // Rocket image that moves with progress
+                Image(
+                    painter = painterResource(id = R.drawable.rocket), // Make sure you have rocket.png in drawables
+                    contentDescription = "Rocket",
+                    modifier = Modifier
+                        .size(rocketSize)
+                        .offset(x = (maxWidth - rocketSize) * progress)
+                        .align(Alignment.CenterStart)
+                )
+            }
             RocketProgressBar(
                 progress = progress,
                 modifier = Modifier
@@ -170,7 +203,7 @@ fun ChoreApp() {
 }
 
 @Composable
-fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit) {
+fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit, onDeleteClicked: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +212,7 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit) {
         shape = RoundedCornerShape(50) // Make it a pill shape
     ) {
         Row(
-            modifier = Modifier.padding(start= 5.dp, end = 20.dp, top = 0.dp, bottom = 0.dp),
+            modifier = Modifier.padding(start= 5.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -198,6 +231,13 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit) {
                 modifier = Modifier.size(30.dp),
                 tint = if (chore.isCompleted) Color.Yellow else Color.White.copy(alpha = 0.5f)
             )
+            IconButton(onClick = onDeleteClicked) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete chore",
+                    tint = Color.White.copy(alpha = 0.5f)
+                )
+            }
         }
     }
 }
