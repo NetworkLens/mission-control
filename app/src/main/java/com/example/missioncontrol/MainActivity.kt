@@ -22,9 +22,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -134,7 +136,7 @@ fun ChoreApp() {
                                     it
                                 }
                             }
-                        })
+                        }, onDeleteClicked = { chores = chores - chore })
                     }
                 }
             }
@@ -162,7 +164,7 @@ fun ChoreApp() {
 }
 
 @Composable
-fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit) {
+fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit, onDeleteClicked: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -171,7 +173,7 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit) {
         shape = RoundedCornerShape(50) // Make it a pill shape
     ) {
         Row(
-            modifier = Modifier.padding(start= 5.dp, end = 20.dp, top = 0.dp, bottom = 0.dp),
+            modifier = Modifier.padding(start= 5.dp, end = 12.dp, top = 0.dp, bottom = 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -190,6 +192,13 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit) {
                 modifier = Modifier.size(30.dp),
                 tint = if (chore.isCompleted) Color.Yellow else Color.White.copy(alpha = 0.5f)
             )
+            IconButton(onClick = onDeleteClicked) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete chore",
+                    tint = Color.White.copy(alpha = 0.5f)
+                )
+            }
         }
     }
 }
