@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MissionControlTheme {
-                ChoreApp()
+                MissionControlApp()
             }
         }
     }
@@ -80,7 +81,42 @@ val allChores = listOf(
 )
 
 @Composable
-fun ChoreApp() {
+fun MissionControlApp() {
+    var commanderName by remember { mutableStateOf<String?>(null) }
+
+    Surface(modifier = Modifier.fillMaxSize()) {
+        if (commanderName == null) {
+            LoginScreen(onNameEntered = { commanderName = it })
+        } else {
+            ChoreApp(commanderName = commanderName!!)
+        }
+    }
+}
+
+@Composable
+fun LoginScreen(onNameEntered: (String) -> Unit) {
+    var name by remember { mutableStateOf("") }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Enter your name, commander!") }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { onNameEntered(name) }) {
+            Text("Start Mission")
+        }
+    }
+}
+
+@Composable
+fun ChoreApp(commanderName: String) {
     var chores by remember { mutableStateOf(allChores.take(3)) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -112,7 +148,7 @@ fun ChoreApp() {
                 contentDescription = "Mission Control Banner"
             )
             Text(
-                text = "Commander Daisy's Mission Log",
+                text = "Commander $commanderName's Mission Log",
                 fontSize = 18.sp,
                 color = Color.White,
                 fontFamily = FontFamily(Font(R.font.orbitron))
@@ -176,7 +212,7 @@ fun ChoreItem(chore: Chore, onChoreClicked: () -> Unit, onDeleteClicked: () -> U
         shape = RoundedCornerShape(50) // Make it a pill shape
     ) {
         Row(
-            modifier = Modifier.padding(start= 5.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
+            modifier = Modifier.padding(start = 5.dp, end = 4.dp, top = 0.dp, bottom = 0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -257,6 +293,14 @@ fun RocketProgressBar(progress: Float, modifier: Modifier = Modifier) {
 @Composable
 fun ChoreAppPreview() {
     MissionControlTheme {
-        ChoreApp()
+        ChoreApp("Daisy")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    MissionControlTheme {
+        LoginScreen(onNameEntered = {})
     }
 }
