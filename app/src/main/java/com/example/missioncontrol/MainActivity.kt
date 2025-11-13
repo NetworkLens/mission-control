@@ -43,6 +43,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -113,7 +115,8 @@ fun ChoreApp() {
             Text(
                 text = "Commander Daisy's Mission Log",
                 fontSize = 18.sp,
-                color = Color.White
+                color = Color.White,
+                fontFamily = FontFamily(Font(R.font.orbitron))
             )
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -157,7 +160,7 @@ fun ChoreApp() {
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(70.dp)
             ) {
                 // Progress bar
                 LinearProgressIndicator(
@@ -171,7 +174,7 @@ fun ChoreApp() {
                     trackColor = Color.White.copy(alpha = 0.3f)
                 )
 
-                val rocketSize = 50.dp
+                val rocketSize = 70.dp
                 // Rocket image that moves with progress
                 Image(
                     painter = painterResource(id = R.drawable.rocket), // Make sure you have rocket.png in drawables
