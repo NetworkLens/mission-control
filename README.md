@@ -1,4 +1,4 @@
-#​​# Mission Control
+## Mission Control
 
 A simple and fun chore-tracking Android app designed for everyone, presented with a cool space theme.
 
